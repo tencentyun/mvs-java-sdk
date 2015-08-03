@@ -309,9 +309,9 @@ public class VideoCloud {
 			data.put("op", "upload");
 			data.put("sha", sha1);
 			data.put("biz_attr", bizAttribute);
-			data.put("title", title);
-			data.put("desc", desc);
-			data.put("magic_context", magicContext);
+			data.put("video_title", title);
+			data.put("video_desc", desc);
+			data.put("magicContext", magicContext);
 			long expired = System.currentTimeMillis() / 1000 + 60;
 			String sign = Sign.appSign(appId, secretId, secretKey, expired, bucketName);
 			HashMap<String, String> header = new HashMap<String, String>();
@@ -342,9 +342,9 @@ public class VideoCloud {
 			data.put("filesize", fileSize);
 			data.put("slice_size", sliceSize);
 			data.put("biz_attr", bizAttribute);
-			data.put("title", title);
-			data.put("desc", desc);
-			data.put("magic_context", magicContext);
+			data.put("video_title", title);
+			data.put("video_desc", desc);
+			data.put("magicContext", magicContext);
 			long expired = System.currentTimeMillis() / 1000 + 60;
 			String sign = Sign.appSign(appId, secretId, secretKey, expired, bucketName);
 			HashMap<String, String> header = new HashMap<String, String>();
