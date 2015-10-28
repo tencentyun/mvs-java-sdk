@@ -65,7 +65,7 @@ public class Request
 	            	}
 	            }
 				HttpResponse httpResponse = httpClient.execute(httpGet);
-				return EntityUtils.toString(httpResponse.getEntity());
+				return EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
 			} catch (Exception e) {
 				throw e;
 			}
@@ -118,7 +118,7 @@ public class Request
 					httpPost.setEntity(multipartEntity);
 				}
 				HttpResponse httpResponse = httpClient.execute(httpPost);
-				return EntityUtils.toString(httpResponse.getEntity());
+				return EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
 			} catch (Exception e) {
 				throw e;
 			}
