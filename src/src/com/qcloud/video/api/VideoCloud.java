@@ -62,7 +62,7 @@ public class VideoCloud {
         for(String s : part){
         	if (!s.equals(""))
             {
-        		if(remotePath != ""){
+        		if(!remotePath.equals("")){
         			remotePath += "/";
         		}
                 remotePath += URLEncoder.encode(s);
@@ -117,17 +117,39 @@ public class VideoCloud {
 	 * 更新文件信息
 	 * @param bucketName bucket名称
 	 * @param remotePath 远程文件路径
+	 * @param videoCover 视频封面
 	 * @param bizAttribute 更新信息
+	 * @param title 视频名称
+	 * @param desc 视频描述
 	 * @return
 	 * @throws Exception 
 	 */
-	public String updateFile(String bucketName, String remotePath, String bizAttribute, String title, String desc) throws Exception{
+	public String updateFile(String bucketName, String remotePath, String videoCover, String bizAttribute, String title, String desc) throws Exception{
 		String url = VIDEO_CGI_URL + appId + "/" + bucketName + encodeRemotePath(remotePath);
+		int flag = 0;
+		if (title != null && desc != null && bizAttribute != null && videoCover != null) {
+			flag = 0x0f;
+        } else {
+            if (title != null) {
+                flag |= 0x02;
+            }
+            if (desc != null) {
+                flag |= 0x04;
+            }
+            if (bizAttribute != null) {
+                flag |= 0x01;
+            }
+            if (videoCover != null) {
+                flag |= 0x08;
+            }
+        }
 		HashMap<String, Object> data = new HashMap<String, Object>();
 		data.put("op", "update");
+		data.put("video_cover", videoCover);
 		data.put("biz_attr", bizAttribute);
-		data.put("title", title);
-		data.put("desc", desc);
+		data.put("video_title", title);
+		data.put("video_desc", desc);
+		data.put("flag", flag);
 		String sign = Sign.appSignOnce(appId, secretId, secretKey, (remotePath.startsWith("/") ? "" : "/") + remotePath, bucketName);
 		String qcloud_sign = sign.toString();
 		HashMap<String, String> header = new HashMap<String, String>();
@@ -292,7 +314,8 @@ public class VideoCloud {
 	 * 单个文件上传
 	 * @param bucketName bucket名称
 	 * @param remotePath 远程文件路径
-	 * @param localPath 本地文件路径
+	 * @param localPath  本地文件路径
+	 * @param videoCover 自定义视频封面URL
 	 * @param bizAttribute 文件属性，业务端维护 
 	 * @param title 视频的标题
 	 * @param desc 视频的描述
@@ -300,7 +323,7 @@ public class VideoCloud {
 	 * @return
 	 * @throws Exception 
 	 */
-	public String uploadFile(String bucketName, String remotePath, String localPath, String bizAttribute, String title, String desc, String magicContext) throws Exception{
+	public String uploadFile(String bucketName, String remotePath, String localPath, String videoCover, String bizAttribute, String title, String desc, String magicContext) throws Exception{
 		
 		try {			
 			String url = VIDEO_CGI_URL + appId + "/" + bucketName + encodeRemotePath(remotePath);
@@ -308,6 +331,7 @@ public class VideoCloud {
 			HashMap<String, Object> data = new HashMap<String, Object>();
 			data.put("op", "upload");
 			data.put("sha", sha1);
+			data.put("video_cover", videoCover);
 			data.put("biz_attr", bizAttribute);
 			data.put("video_title", title);
 			data.put("video_desc", desc);
@@ -331,7 +355,7 @@ public class VideoCloud {
 	 * @return
 	 * @throws Exception 
 	 */
-	public String sliceUploadFileFirstStep(String bucketName, String remotePath, String localPath, String bizAttribute,String title,String desc,String magicContext, int sliceSize) throws Exception{
+	public String sliceUploadFileFirstStep(String bucketName, String remotePath, String localPath, String videoCover, String bizAttribute,String title,String desc,String magicContext, int sliceSize) throws Exception{
 		try{
 			String url = VIDEO_CGI_URL + appId + "/" + bucketName + encodeRemotePath(remotePath);
 			String sha1 = HMACSHA1.getFileSha1(localPath);
@@ -341,6 +365,7 @@ public class VideoCloud {
 			data.put("sha", sha1);
 			data.put("filesize", fileSize);
 			data.put("slice_size", sliceSize);
+			data.put("video_cover", videoCover);
 			data.put("biz_attr", bizAttribute);
 			data.put("video_title", title);
 			data.put("video_desc", desc);
@@ -389,7 +414,7 @@ public class VideoCloud {
 	 * @throws Exception 
 	 */
 	public String sliceUploadFile(String bucketName, String remotePath, String localPath) throws Exception{
-		return sliceUploadFile(bucketName, remotePath, localPath, "", "", "", "", 512 * 1024);
+		return sliceUploadFile(bucketName, remotePath, localPath, "", "", "", "", "", 512 * 1024);
 	}
 	
 	/**
@@ -405,8 +430,8 @@ public class VideoCloud {
 	 * @return
 	 * @throws Exception 
 	 */
-	public String sliceUploadFile(String bucketName, String remotePath, String localPath, String bizAttribute,String title,String desc,String magicContext,int sliceSize) throws Exception{
-		String result = sliceUploadFileFirstStep(bucketName, remotePath, localPath, bizAttribute,title,desc,magicContext, sliceSize);
+	public String sliceUploadFile(String bucketName, String remotePath, String localPath, String videoCover, String bizAttribute,String title,String desc,String magicContext,int sliceSize) throws Exception{
+		String result = sliceUploadFileFirstStep(bucketName, remotePath, localPath, videoCover, bizAttribute,title,desc,magicContext, sliceSize);
 		try{
 			JSONObject jsonObject = new JSONObject(result);
 			int code = jsonObject.getInt("code");

@@ -12,6 +12,8 @@ public class Demo {
 		try{			
 			String result = "";
 			String bucketName = "abcde";
+            String coverUrl = "http://ceshi-1000027.file.myqcloud.com/1.jpg";
+            
             long start = System.currentTimeMillis();
 			//创建目录
 			result = video.createFolder(bucketName, "/sdk/","");
@@ -21,7 +23,7 @@ public class Demo {
 			System.out.println("=======uploadFile========\n"+result);
 			//result = video.uploadFile(bucketName, "/sdk/test.mp4", "D:\\test.mp4", "test file attr", "test title","test desc");
 			//更新视频属性、标题、描述等信息
-			result = video.updateFile(bucketName, "/sdk/test.mp4", "test file attr", "test title","test desc");
+			result = video.updateFile(bucketName, "/sdk/test.mp4", coverUrl, "test file attr", "test title","test desc");
 			System.out.println("=======updateFile========\n"+result);
 			//获取目录下视频文件信息
             result = video.getFolderList(bucketName, "/", 20, "", 0, VideoCloud.FolderPattern.Both);
